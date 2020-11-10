@@ -1,0 +1,154 @@
+head>
+
+<title>Vote System app</title>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="title" content="Vote System App Demo"/>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <script>
+    function getVote(int) {
+      var xmlhttp=new XMLHttpRequest();
+      xmlhttp.onreadystatechange=function() {
+        if (this.readyState==4 && this.status==200) {
+          document.getElementById("poll").innerHTML=this.responseText;
+        }
+      }
+      xmlhttp.open("GET","schoolesim.php?vote="+int,true);
+      xmlhttp.send();
+    }
+    </script>
+</head>
+<body>
+    
+    <div id="poll">
+    <h3>Do you like PHP and AJAX so far?</h3>
+    <form>
+    Yes: <input type="radio" name="vote" value="0" onclick="getVote(this.value)"><br>
+    No: <input type="radio" name="vote" value="1" onclick="getVote(this.value)">
+    </form>
+    </div>
+    
+</body>
+</html>
+<style>
+
+.choice {
+  height: 400px;
+  display: inline-block;
+  width: 100px;
+}
+
+.result {
+  height: 330px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.bar {
+  height: 0%;
+  width: 70%;
+  margin: 0 auto;
+}
+
+.bar[data-choice="1"] {
+  background-color: red;
+}
+
+.bar[data-choice="2"] {
+  background-color: green;
+}
+
+.bar[data-choice="3"] {
+  background-color: blue;
+}
+
+.label {
+  height: 70px;
+  text-align: center;
+}
+</style>
+
+<div id="poll">
+<h3>Kuka voitti vuoden 2019 jääkiekon MM-kisat?</h3>
+    
+<div id="choices">
+  <div class="choice">
+    <div class="result">
+      <div class="bar" data-choice="1"></div>
+    </div>
+    <div class="label">
+      <p>Suomi 1</p>
+      <button data-choice="1">Vote</button>
+    </div>
+  </div>
+  <div class="choice">
+    <div class="result">
+      <div class="bar" data-choice="2"></div>
+    </div>
+    <div class="label">
+      <p>Kanada 2</p>
+      <button data-choice="2">Vote</button>
+    </div>
+  </div>
+  <div class="choice">
+    <div class="result">
+      <div class="bar" data-choice="3"></div>
+    </div>
+    <div class="label">
+      <p>Venäjä 3</p>
+      <button data-choice="3">Vote</button>
+    </div>
+  </div>
+</div>
+
+<script>
+
+var buttons = document.querySelectorAll(".choice button"),
+  tally = {
+    1: 0,
+    2: 0,
+    3: 0,
+    total: 100
+  };
+
+function vote(choice) {
+  tally[choice]++;
+  tally["total"]++;
+  console.log(tally);
+}
+
+function barPercentage(node, tally) {
+  var choice = node.dataset.choice;
+  
+  if (tally[choice])
+    return tally[choice]/tally["total"] * 100;
+  return 0;
+}
+
+function renderBars() {
+  var bars = document.getElementsByClassName("bar");
+  
+  for (var i = 0; i < bars.length; i++) {
+    var percentage = barPercentage(bars[i], tally);
+    console.log(percentage)
+    bars[i].style.height = percentage.toString() + "%";
+  }
+}
+
+function setup() {
+  // Set up event listeners
+  for (var i = 0; i < buttons.length; i++) {
+    buttons[i].addEventListener("click", function(e) {
+      vote(e.target.dataset["choice"]);
+      renderBars();
+    });
+  }
+  
+  renderBars();
+}
+
+setup();
+
+</script>
